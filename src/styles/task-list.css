@@ -1,0 +1,5 @@
+.task-list-container {
+    padding: 1rem;
+    display: flex;
+    gap: 1rem;
+}

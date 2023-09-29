@@ -8,14 +8,25 @@ import {
   Snackbar,
 } from "@mui/material";
 import "../styles/task-form.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { useSearchParams } from "react-router-dom";
 
 export default function TaskForm({ getTasks, onClose }) {
+  const [searchParams] = useSearchParams();
+
+  const taskId = searchParams.get("taskId");
+
+  const [task, setTask] = useState(null);
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
 
   const [validationError, setValidationError] = useState("");
+
+  useEffect(() => {
+    if (taskId) getTask();
+  }, [taskId]);
 
   const createTask = () => {
     if (name.length > 0 && description.length > 0) {
@@ -36,10 +47,30 @@ export default function TaskForm({ getTasks, onClose }) {
     }
   };
 
+  const getTask = () => {
+    axios.get(`http://localhost:3002/todos/${taskId}`).then((response) => {
+      setTask(response.data);
+      setName(response.data.name);
+      setDescription(response.data.description);
+    });
+  };
+
+  const updateTask = () => {
+    axios
+      .put(`http://localhost:3002/todos/${taskId}`, {
+        name,
+        description,
+      })
+      .then(() => {
+        onClose();
+        getTasks();
+      });
+  };
+
   return (
     <form className="task-form">
       <Typography variant="h5" className="task-form-title">
-        Create a New Task
+        {taskId ? "Edit Task" : "Create a New Task"}
       </Typography>
       <div className="task-form-body">
         <FormControl>
@@ -51,6 +82,7 @@ export default function TaskForm({ getTasks, onClose }) {
               setName(event.target.value);
             }}
             placeholder="Name"
+            value={name}
           />
           <FormHelperText id="name-helper-text">
             Type the name of the task
@@ -65,6 +97,7 @@ export default function TaskForm({ getTasks, onClose }) {
               setDescription(event.target.value);
             }}
             placeholder="Description"
+            value={description}
           />
           <FormHelperText id="description-helper-text">
             Type the description of the task
@@ -89,8 +122,12 @@ export default function TaskForm({ getTasks, onClose }) {
           Cancel
         </Button>
 
-        <Button variant="outlined" color="primary" onClick={createTask}>
-          Create
+        <Button
+          variant="outlined"
+          color="primary"
+          onClick={taskId ? updateTask : createTask}
+        >
+          {taskId ? "Edit" : "Create"}
         </Button>
       </div>
 

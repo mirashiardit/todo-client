@@ -1,10 +1,10 @@
 import { AppBar, Box, Button, Toolbar, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
+import { useSearchParams } from "react-router-dom";
 
-export default function Header({
-    getTasks
-}) {
+export default function Header({ getTasks }) {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const handleDrawerOpen = () => {
@@ -13,7 +13,14 @@ export default function Header({
 
   const handleDrawerClose = () => {
     setDrawerOpen(false);
+    setSearchParams({});
   };
+
+  useEffect(() => {
+    if (searchParams.has("taskId")) {
+      setDrawerOpen(true);
+    }
+  }, [searchParams]);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -34,7 +41,11 @@ export default function Header({
         </Toolbar>
       </AppBar>
 
-      <Sidebar open={drawerOpen} onClose={handleDrawerClose} getTasks={getTasks}/>
+      <Sidebar
+        open={drawerOpen}
+        onClose={handleDrawerClose}
+        getTasks={getTasks}
+      />
     </Box>
   );
 }

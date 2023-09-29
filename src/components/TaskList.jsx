@@ -1,8 +1,18 @@
-import { useEffect } from "react";
-import { Card, CardContent, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardActions,
+  Typography,
+  IconButton,
+} from "@mui/material";
+import { Delete as DeleteIcon } from "@mui/icons-material";
 import "../styles/task-list.css";
+import { DeleteModal } from "./DeleteModal";
+import { TaskCard } from "./TaskCard";
 
 export default function TaskList({ tasks, getTasks }) {
+
   useEffect(() => {
     getTasks();
   }, []);
@@ -10,19 +20,7 @@ export default function TaskList({ tasks, getTasks }) {
   return (
     <div className="task-list-container">
       {tasks.map((task) => (
-        <Card>
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              {task.name}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {task.description}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {task.dueDate}
-            </Typography>
-          </CardContent>
-        </Card>
+        <TaskCard {...task} getTasks={getTasks}/>
       ))}
     </div>
   );

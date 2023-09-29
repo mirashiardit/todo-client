@@ -2,6 +2,7 @@ import { useState } from "react";
 import Header from "./components/Header";
 import TaskList from "./components/TaskList";
 import axios from "axios";
+import { BrowserRouter } from "react-router-dom";
 
 function App() {
   const [tasks, setTasks] = useState([]);
@@ -14,8 +15,10 @@ function App() {
 
   return (
     <div>
-      <Header getTasks={getTasks} />
-      <TaskList tasks={tasks} getTasks={getTasks} />
+      <BrowserRouter>
+        <Header getTasks={getTasks} />
+        <TaskList tasks={tasks} getTasks={getTasks} />
+      </BrowserRouter>
     </div>
   );
 }
